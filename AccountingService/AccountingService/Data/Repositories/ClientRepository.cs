@@ -1,5 +1,7 @@
 ﻿using AccountingService.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AccountingService.Data.Repositories
 {
@@ -24,32 +26,69 @@ namespace AccountingService.Data.Repositories
 
         public async Task<Client?> ReadWithWallet(int id)
         {
+            using IDbContextTransaction transaction = _context.Database.BeginTransaction();
             Client? client = await _context.Clients.FindAsync(id);
 
             if (client != null)
             {
-                await _context.Entry(client)
-                    .Reference(c => c.Wallet)
-                    .LoadAsync();
+                Wallet? wallet = await _context.Wallets.FirstOrDefaultAsync(w => w.ClientId == client.Id);
+                client = client.WithWallet(wallet);
             }
+
+            transaction.Commit();
 
             return client;
         }
 
         public async Task<Client> Create(Client client)
         {
-            EntityEntry<Client> entry =  await _context.Clients.AddAsync(client);
+            using IDbContextTransaction transaction = _context.Database.BeginTransaction();
+            Client created = await CreateEntity(client);
 
-            await _context.SaveChangesAsync();
+            if (client.Wallet != null)
+            {
+                await CreateEntity(client.Wallet.WithClientId(created.Id));
+            }
 
-            return entry.Entity;
+            transaction.Commit();
+
+            return created;
         }
 
         public async Task Update(int id, Client client)
         {
-            _context.Clients.Update(client);
+            using IDbContextTransaction transaction = _context.Database.BeginTransaction();
+            
+            await UpdateEntity(client);
+
+            if (client.Wallet != null)
+            {
+                await UpdateEntity(client.Wallet);
+            }
+
+            transaction.Commit();
+        }
+
+        private async Task<TEntity> CreateEntity<TEntity>(TEntity entity) where TEntity : class
+        {
+            return await SaveEntityState(entity, EntityState.Added);
+        }
+
+        private async Task<TEntity> UpdateEntity<TEntity>(TEntity entity) where TEntity : class
+        {
+            return await SaveEntityState(entity, EntityState.Modified);
+        }
+
+        private async Task<TEntity> SaveEntityState<TEntity>(TEntity entity, EntityState state) where TEntity : class
+        {
+            EntityEntry<TEntity> entry = _context.Entry(entity);
+            entry.State = state;
 
             await _context.SaveChangesAsync();
+
+            entry.State = EntityState.Detached;
+
+            return entry.Entity;
         }
     }
 }

@@ -11,8 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AccountingDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("AccountingDb")));
+builder.Services.AddDbContext<AccountingDbContext>(options => 
+    options
+        .UseNpgsql(builder.Configuration.GetConnectionString("AccountingDb"))
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();

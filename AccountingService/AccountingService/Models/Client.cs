@@ -30,7 +30,7 @@
 
         public Wallet? Wallet { get; }
 
-        public Client WithWallet(Wallet wallet)
+        public Client WithWallet(Wallet? wallet)
         {
             return new Client(Id, LastName, FirstName, MiddleName, BirthDate, wallet);
         }

@@ -19,5 +19,20 @@
         public decimal Amount { get; }
 
         public int ClientId { get; }
+
+        public Wallet WithClientId(int clientId)
+        {
+            return new Wallet(Id, Amount, clientId);
+        }
+
+        public Wallet CreditAmount(decimal amount)
+        {
+            return new Wallet(Id, Amount + amount, ClientId);
+        }
+
+        public Wallet DebitAmount(decimal amount)
+        {
+            return new Wallet(Id, Amount - amount, ClientId);
+        }
     }
 }
