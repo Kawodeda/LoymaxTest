@@ -2,7 +2,13 @@
 {
     public class Client
     {
-        public Client(int id, string lastName, string firstName, string middleName, DateOnly birthDate)
+        public Client(string lastName, string firstName, string middleName, DateOnly birthDate) 
+            : this(0, lastName, firstName, middleName, birthDate)
+        {
+
+        }
+
+        private Client(int id, string lastName, string firstName, string middleName, DateOnly birthDate)
         {
             Id = id;
             LastName = lastName;
@@ -13,7 +19,7 @@
 
         public int Id { get; }
 
-        public string LastName { get; set; }
+        public string LastName { get; }
 
         public string FirstName { get; }
 
