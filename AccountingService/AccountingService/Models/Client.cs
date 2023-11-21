@@ -20,5 +20,7 @@
         public string MiddleName { get; }
 
         public DateOnly BirthDate { get; }
+
+        public Wallet? Wallet { get; }
     }
 }

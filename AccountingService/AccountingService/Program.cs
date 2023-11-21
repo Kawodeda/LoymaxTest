@@ -1,3 +1,6 @@
+using AccountingService.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<AccountingDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AccountingDb")));
 
 var app = builder.Build();
 

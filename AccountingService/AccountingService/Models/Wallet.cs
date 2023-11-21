@@ -2,16 +2,17 @@
 {
     public class Wallet
     {
-        public Wallet(int id, decimal amount)
+        public Wallet(int id, decimal amount, int clientId)
         {
             Id = id;
             Amount = amount;
+            ClientId = clientId;
         }
 
         public int Id { get; }
 
         public decimal Amount { get; }
 
-        public Client? Client { get; }
+        public int ClientId { get; }
     }
 }
