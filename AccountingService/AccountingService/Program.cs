@@ -1,6 +1,7 @@
 using AccountingService;
 using AccountingService.Data;
 using AccountingService.Data.Repositories;
+using AccountingService.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<AccountingDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientRegistrationService, ClientRegistrationService>();
 
 var app = builder.Build();
 

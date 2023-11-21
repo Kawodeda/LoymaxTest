@@ -4,6 +4,7 @@ using AccountingService.Dto;
 using AccountingService.Dto.Requests;
 using AccountingService.Dto.Responses;
 using AccountingService.Models;
+using AccountingService.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +16,13 @@ namespace AccountingService.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly IClientRepository _clientRepository;
+        private readonly IClientRegistrationService _clientRegistrationService;
         private readonly IMapper _mapper;
 
-        public ClientsController(IClientRepository clientRepository, IMapper mapper)
+        public ClientsController(IClientRepository clientRepository, IClientRegistrationService clientRegistrationService, IMapper mapper)
         {
             _clientRepository = clientRepository;
+            _clientRegistrationService = clientRegistrationService;
             _mapper = mapper;
         }
 
@@ -55,7 +58,7 @@ namespace AccountingService.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterClientRequest request)
         {
             var client = _mapper.Map<Client>(request);
-            Client created = await _clientRepository.Create(client);
+            Client created = await _clientRegistrationService.RegisterClient(client);
             var result = _mapper.Map<ClientDto>(created);
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
