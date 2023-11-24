@@ -4,7 +4,7 @@ namespace AccountingService.Data.Repositories
 {
     public interface IClientRepository
     {
-        IEnumerable<Client> List();
+        IQueryable<Client> List();
 
         Task<Client?> Read(int id);
 

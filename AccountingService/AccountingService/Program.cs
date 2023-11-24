@@ -18,7 +18,7 @@ builder.Services.AddDbContext<AccountingDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IClientRegistrationService, ClientRegistrationService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IClientAccountingService, ClientAccountingService>();
 
 var app = builder.Build();

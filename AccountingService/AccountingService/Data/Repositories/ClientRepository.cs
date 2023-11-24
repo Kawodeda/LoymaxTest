@@ -14,7 +14,7 @@ namespace AccountingService.Data.Repositories
             _context = context;
         }
 
-        public IEnumerable<Client> List()
+        public IQueryable<Client> List()
         {
             return _context.Clients;
         }

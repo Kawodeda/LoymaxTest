@@ -1,9 +1,7 @@
 ﻿using System.Net;
-using AccountingService.Data.Repositories;
 using AccountingService.Dto.Requests;
 using AccountingService.Dto.Responses;
 using AccountingService.Exceptions;
-using AccountingService.Models;
 using AccountingService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +12,10 @@ namespace AccountingService.Controllers
     [Produces("application/json")]
     public class AccountsController : ControllerBase
     {
-        private readonly IClientRepository _clientRepository;
         private readonly IClientAccountingService _accountingService;
 
-        public AccountsController(IClientRepository clientRepository, IClientAccountingService accountingService)
+        public AccountsController(IClientAccountingService accountingService)
         {
-            _clientRepository = clientRepository;
             _accountingService = accountingService;
         }
 
@@ -28,13 +24,16 @@ namespace AccountingService.Controllers
         [ProducesResponseType(typeof(NotFoundResponse), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAccountAmount(int clientId)
         {
-            Client? client = await _clientRepository.ReadWithWallet(clientId);
-            if (client == null || client.Wallet == null)
+            try
+            {
+                decimal amount = await _accountingService.GetAccountAmount(clientId);
+
+                return Ok(new AccountAmountResponse { Amount = amount });
+            }
+            catch (NotFoundException)
             {
                 return NotFound(new NotFoundResponse { Id = clientId });
             }
-
-            return Ok(new AccountAmountResponse { Amount = client.Wallet.Amount });
         }
 
         [HttpPost(nameof(CreditAccount))]

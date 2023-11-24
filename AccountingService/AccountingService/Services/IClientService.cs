@@ -2,8 +2,12 @@
 
 namespace AccountingService.Services
 {
-    public interface IClientRegistrationService
+    public interface IClientService
     {
+        IQueryable<Client> ListClients();
+
+        Task<Client> GetClient(int clientId);
+
         Task<Client> RegisterClient(Client client);
     }
 }
