@@ -12,6 +12,6 @@ namespace AccountingService.Data.Repositories
 
         Task<Client> Create(Client client);
 
-        Task Update(int id, Client client);
+        Task<Client> Update(int id, Client client);
     }
 }

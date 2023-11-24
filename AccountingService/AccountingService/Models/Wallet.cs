@@ -9,6 +9,11 @@
 
         private Wallet(int id, decimal amount, int clientId)
         {
+            if (amount < 0)
+            {
+                throw new ArgumentException($"{nameof(amount)} can not be negative");
+            }
+
             Id = id;
             Amount = amount;
             ClientId = clientId;
@@ -32,7 +37,13 @@
 
         public Wallet DebitAmount(decimal amount)
         {
-            return new Wallet(Id, Amount - amount, ClientId);
+            decimal newAmount = Amount - amount;
+            if (newAmount < 0)
+            {
+                throw new InvalidOperationException($"Tried to withdraw more than the current {Amount}");
+            }
+
+            return new Wallet(Id, newAmount, ClientId);
         }
     }
 }

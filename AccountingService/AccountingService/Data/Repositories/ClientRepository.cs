@@ -55,11 +55,11 @@ namespace AccountingService.Data.Repositories
             return created;
         }
 
-        public async Task Update(int id, Client client)
+        public async Task<Client> Update(int id, Client client)
         {
             using IDbContextTransaction transaction = _context.Database.BeginTransaction();
             
-            await UpdateEntity(client);
+            Client updated = await UpdateEntity(client);
 
             if (client.Wallet != null)
             {
@@ -67,6 +67,8 @@ namespace AccountingService.Data.Repositories
             }
 
             transaction.Commit();
+
+            return updated;
         }
 
         private async Task<TEntity> CreateEntity<TEntity>(TEntity entity) where TEntity : class
