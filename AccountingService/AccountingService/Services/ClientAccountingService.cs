@@ -8,6 +8,8 @@ namespace AccountingService.Services
     {
         private const string AccountNotFoundMessage = "Specified account was not found";
 
+        private static readonly SemaphoreSlim _semaphore = new (1, 1);
+
         private readonly IClientRepository _clientRepository;
 
         public ClientAccountingService(IClientRepository clientRepository)
@@ -28,30 +30,46 @@ namespace AccountingService.Services
 
         public async Task<decimal> CreditClientAccount(int clientId, decimal amount)
         {
-            Client? client = await _clientRepository.ReadWithWallet(clientId);
-            if (client?.Wallet == null)
+            await _semaphore.WaitAsync();
+            try
             {
-                throw new NotFoundException(AccountNotFoundMessage);
+                Client? client = await _clientRepository.ReadWithWallet(clientId);
+                if (client?.Wallet == null)
+                {
+                    throw new NotFoundException(AccountNotFoundMessage);
+                }
+
+                client = client.WithWallet(client.Wallet.CreditAmount(amount));
+                client = await _clientRepository.Update(client.Id, client);
+
+                return client.Wallet!.Amount;
             }
-
-            client = client.WithWallet(client.Wallet.CreditAmount(amount));
-            client = await _clientRepository.Update(client.Id, client);
-
-            return client.Wallet!.Amount;
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task<decimal> DebitClientAccount(int clientId, decimal amount)
         {
-            Client? client = await _clientRepository.ReadWithWallet(clientId);
-            if (client?.Wallet == null)
+            await _semaphore.WaitAsync();
+            try
             {
-                throw new NotFoundException(AccountNotFoundMessage);
+                Client? client = await _clientRepository.ReadWithWallet(clientId);
+                if (client?.Wallet == null)
+                {
+                    throw new NotFoundException(AccountNotFoundMessage);
+                }
+
+                client = client.WithWallet(client.Wallet.DebitAmount(amount));
+                client = await _clientRepository.Update(client.Id, client);
+
+                return client.Wallet!.Amount;
             }
-
-            client = client.WithWallet(client.Wallet.DebitAmount(amount));
-            client = await _clientRepository.Update(client.Id, client);
-
-            return client.Wallet!.Amount;
+            finally
+            {
+                _semaphore.Release();
+            }
         }
     }
 }
