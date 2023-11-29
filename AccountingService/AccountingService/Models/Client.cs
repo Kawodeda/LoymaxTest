@@ -8,7 +8,7 @@
 
         }
 
-        private Client(int id, string lastName, string firstName, string middleName, DateOnly birthDate, Wallet? wallet = null)
+        public Client(int id, string lastName, string firstName, string middleName, DateOnly birthDate, Wallet? wallet = null)
         {
             Id = id;
             LastName = lastName;

@@ -9,7 +9,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountingService.Controllers
-{
+{ 
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
