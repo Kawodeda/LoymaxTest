@@ -2,6 +2,7 @@
 using AccountingService.Dto.Requests;
 using AccountingService.Dto.Responses;
 using AccountingService.Exceptions;
+using AccountingService.Filters;
 using AccountingService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace AccountingService.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [TypeFilter(typeof(UnhandledExceptionFilter))]
     public class AccountsController : ControllerBase
     {
         private readonly IClientAccountingService _accountingService;

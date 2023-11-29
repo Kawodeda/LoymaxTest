@@ -3,6 +3,7 @@ using AccountingService.Dto;
 using AccountingService.Dto.Requests;
 using AccountingService.Dto.Responses;
 using AccountingService.Exceptions;
+using AccountingService.Filters;
 using AccountingService.Models;
 using AccountingService.Services;
 using AutoMapper;
@@ -13,6 +14,7 @@ namespace AccountingService.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [TypeFilter(typeof(UnhandledExceptionFilter))]
     public class ClientsController : ControllerBase
     {
         private readonly IClientService _clientService;
